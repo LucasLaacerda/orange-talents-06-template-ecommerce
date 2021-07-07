@@ -4,13 +4,15 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import br.com.zupacademy.lucaslacerda.mercadolivre.validacao.RegistroUnicoValid;
 
 
 
 public class UsuarioForm {
 
 	@NotBlank @Email
+	@RegistroUnicoValid(message="Login informado ja foi cadastrado",entidade = Usuario.class,atributo = "login")
 	private String login;
 	
 	@NotBlank @Length(min = 6)
