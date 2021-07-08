@@ -1,4 +1,4 @@
-package br.com.zupacademy.lucaslacerda.mercadolivre.usuario;
+package br.com.zupacademy.lucaslacerda.mercadolivre.categoria;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/usuario")
-public class CadastroUsuarioController {
-
+@RequestMapping("/categoria")
+public class CategoriaController {
+	
 	 @PersistenceContext
 	 private EntityManager manager;
 	
@@ -22,13 +22,13 @@ public class CadastroUsuarioController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<?> cadastrar(@RequestBody @Validated UsuarioForm form){
+	public ResponseEntity<?> cadastrar(@RequestBody @Validated CategoriaForm form){
 		
-		Usuario usuario = form.toModel();	
-		manager.persist(usuario);
+		Categoria categoria = form.toModel(manager);	
+		manager.persist(categoria);
 		
 		return ResponseEntity.ok().build();	
 	}
 	
-	
+
 }
