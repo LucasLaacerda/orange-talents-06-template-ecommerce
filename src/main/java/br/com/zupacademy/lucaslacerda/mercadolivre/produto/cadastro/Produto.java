@@ -2,8 +2,12 @@ package br.com.zupacademy.lucaslacerda.mercadolivre.produto.cadastro;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,10 +38,12 @@ public class Produto {
 	
 	@NotNull
 	@Column(nullable=false)
-	private int quantidade;
+	private Integer quantidade;
 	
-	@OneToMany @Size(min=3)
-	private Set<ProdutoCaracteristica> caracteristicas;
+	 
+	@OneToMany(mappedBy = "produto",cascade = CascadeType.PERSIST)
+	@Size(min=3)
+	private Set<ProdutoCaracteristica> caracteristicas = new HashSet<>();
 	
 	@NotNull
 	@Column(nullable=false)
@@ -55,21 +61,21 @@ public class Produto {
 	public Produto() {
 		
 	}
-	
 
 	public Produto(@NotNull String nome, @NotNull BigDecimal valor, @NotNull int quantidade,
-			@Size(min = 3) Set<ProdutoCaracteristica> caracteristicas, @NotNull String descricao, Categoria categoria,
+			@Size(min = 3) Collection<CaracteristicaForm> caracteristicas, @NotNull String descricao, Categoria categoria,
 			Usuario vendedor) {
 		super();
 		this.nome = nome;
 		this.valor = valor;
 		this.quantidade = quantidade;
-		this.caracteristicas = caracteristicas;
+		this.caracteristicas.addAll(caracteristicas
+				.stream().map(caracteristica -> caracteristica.toModel(this))
+				.collect(Collectors.toSet()));
 		this.descricao = descricao;
 		this.categoria = categoria;
 		this.vendedor = vendedor;
 	}
-
 
 	public Long getId() {
 		return id;
@@ -106,6 +112,33 @@ public class Produto {
 
 	public Set<ProdutoCaracteristica> getCaracteristicas() {
 		return caracteristicas;
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Produto other = (Produto) obj;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		return true;
 	}
 	
 	

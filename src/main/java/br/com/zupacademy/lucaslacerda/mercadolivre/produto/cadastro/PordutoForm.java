@@ -1,6 +1,7 @@
 package br.com.zupacademy.lucaslacerda.mercadolivre.produto.cadastro;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,9 +26,9 @@ public class PordutoForm {
 	@NotNull  @Positive
 	private BigDecimal valor;
 	@NotNull @Min(value = 0)
-	private int quantidade;
+	private Integer quantidade;
 	@Size(min=3)
-	private Set<ProdutoCaracteristica> caracteristicas;
+	private List<CaracteristicaForm> caracteristicas;
 	@NotBlank @Length(max=1000)
 	private String descricao;
 	@NotNull
@@ -41,21 +42,25 @@ public class PordutoForm {
 	
 
 	public PordutoForm(@NotBlank String nome, @NotNull @DecimalMin("0.0") BigDecimal valor,
-			@NotNull @Min(0) int quantidade, @Size(min = 3) Set<ProdutoCaracteristica> caracteristicas,
+			@NotNull @Min(0) int quantidade, @Size(min = 3) List<CaracteristicaForm> caracteristicas,
 			@NotBlank @Length(max = 1000) String descricao, @NotNull Long categoria) {
 		super();
 		this.nome = nome;
 		this.valor = valor;
 		this.quantidade = quantidade;
-		this.caracteristicas = caracteristicas;
+		this.caracteristicas.addAll(caracteristicas);		
 		this.descricao = descricao;
 		this.categoria = categoria;
 	}
 
 
 
-	public Set<ProdutoCaracteristica> getCaracteristicas() {
+	public List<CaracteristicaForm> getCaracteristicas() {
 		return caracteristicas;
+	}
+	public void setCaracteristicas(
+			List<CaracteristicaForm> caracteristicas) {
+		this.caracteristicas = caracteristicas;
 	}
 
 	public String getNome() {
@@ -94,9 +99,7 @@ public class PordutoForm {
 
 
 	public Produto toModel(EntityManager manager, Usuario usuarioLogado) {
-		for(ProdutoCaracteristica carac:caracteristicas) {
-			manager.persist(carac);
-		}
+		
 		return new Produto(nome, valor, quantidade, 
 				caracteristicas, descricao, manager.find(Categoria.class, categoria), usuarioLogado);
 	}
