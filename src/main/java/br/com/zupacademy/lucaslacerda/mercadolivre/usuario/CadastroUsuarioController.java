@@ -2,10 +2,10 @@ package br.com.zupacademy.lucaslacerda.mercadolivre.usuario;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ public class CadastroUsuarioController {
 	
 	@PostMapping
 	@Transactional
-	public ResponseEntity<?> cadastrar(@RequestBody @Validated UsuarioForm form){
+	public ResponseEntity<?> cadastrar(@RequestBody @Valid UsuarioForm form){
 		
 		Usuario usuario = form.toModel();	
 		manager.persist(usuario);
