@@ -26,7 +26,8 @@ public class ProdutoCaracteristica {
 	
 	@ManyToOne
 	private @NotNull @Valid Produto produto;
-
+	
+	@Deprecated
 	public ProdutoCaracteristica() {
 		
 	}

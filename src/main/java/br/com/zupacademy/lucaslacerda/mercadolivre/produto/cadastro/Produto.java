@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.zupacademy.lucaslacerda.mercadolivre.categoria.Categoria;
+import br.com.zupacademy.lucaslacerda.mercadolivre.produto.imagem.ImagemProduto;
 import br.com.zupacademy.lucaslacerda.mercadolivre.usuario.Usuario;
 
 @Entity
@@ -56,8 +57,11 @@ public class Produto {
 	private Usuario vendedor;
 	
 	private LocalDateTime instante = LocalDateTime.now();
+
+	@OneToMany(mappedBy = "produto",cascade = CascadeType.MERGE)
+	private Set<ImagemProduto> imagens = new HashSet<ImagemProduto>();
 	
-	
+	@Deprecated
 	public Produto() {
 		
 	}
@@ -139,6 +143,18 @@ public class Produto {
 		} else if (!nome.equals(other.nome))
 			return false;
 		return true;
+	}
+
+	public void relacionaImagens(Set<String> links) {
+		Set<ImagemProduto> imagens = 
+		  links.stream().map(link -> new ImagemProduto(this,link))
+		  .collect(Collectors.toSet());
+		
+		this.imagens.addAll(imagens);
+	}
+
+	public boolean verificaDono(Usuario usuarioLogado) {	
+		return this.vendedor.getId().equals(usuarioLogado.getId());
 	}
 	
 	

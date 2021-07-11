@@ -2,12 +2,9 @@ package br.com.zupacademy.lucaslacerda.mercadolivre.produto.cadastro;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -15,13 +12,16 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
+
 import br.com.zupacademy.lucaslacerda.mercadolivre.categoria.Categoria;
 import br.com.zupacademy.lucaslacerda.mercadolivre.usuario.Usuario;
+import br.com.zupacademy.lucaslacerda.mercadolivre.validacao.RegistroUnicoValid;
 import br.com.zupacademy.lucaslacerda.mercadolivre.validacao.VerificaIdValid;
 
 public class PordutoForm {
 	
 	@NotBlank
+	@RegistroUnicoValid(message="Nome informado ja foi cadastrado",entidade = Produto.class,atributo = "nome")
 	private String nome;
 	@NotNull  @Positive
 	private BigDecimal valor;
