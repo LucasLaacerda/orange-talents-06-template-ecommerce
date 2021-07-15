@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,6 +21,8 @@ import javax.validation.constraints.Size;
 
 import br.com.zupacademy.lucaslacerda.mercadolivre.categoria.Categoria;
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.imagem.ImagemProduto;
+import br.com.zupacademy.lucaslacerda.mercadolivre.produto.opiniao.Opiniao;
+import br.com.zupacademy.lucaslacerda.mercadolivre.produto.pergunta.Pergunta;
 import br.com.zupacademy.lucaslacerda.mercadolivre.usuario.Usuario;
 
 @Entity
@@ -42,7 +45,7 @@ public class Produto {
 	private Integer quantidade;
 	
 	 
-	@OneToMany(mappedBy = "produto",cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "produto",cascade = CascadeType.PERSIST,fetch = FetchType.EAGER)
 	@Size(min=3)
 	private Set<ProdutoCaracteristica> caracteristicas = new HashSet<>();
 	
@@ -58,7 +61,13 @@ public class Produto {
 	
 	private LocalDateTime instante = LocalDateTime.now();
 
-	@OneToMany(mappedBy = "produto",cascade = CascadeType.MERGE)
+	@OneToMany(mappedBy = "produto",fetch = FetchType.EAGER)
+	private Set<Opiniao> opinioes = new HashSet<Opiniao>();
+	
+	@OneToMany(mappedBy = "produto",fetch = FetchType.EAGER)
+	private Set<Pergunta> perguntas = new HashSet<Pergunta>();
+	
+	@OneToMany(mappedBy = "produto",cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
 	private Set<ImagemProduto> imagens = new HashSet<ImagemProduto>();
 	
 	@Deprecated
@@ -155,6 +164,22 @@ public class Produto {
 
 	public boolean verificaDono(Usuario usuarioLogado) {	
 		return this.vendedor.getId().equals(usuarioLogado.getId());
+	}
+
+	public Set<ImagemProduto> getImagens() {
+		return imagens;
+	}
+
+	public Set<Opiniao> getOpinioes() {
+		return opinioes;
+	}
+
+	public Set<Pergunta> getPerguntas() {
+		return perguntas;
+	}
+	
+	public int getQtdOpinioes() {
+		return opinioes.size();
 	}
 	
 	
