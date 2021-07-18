@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import br.com.zupacademy.lucaslacerda.mercadolivre.categoria.Categoria;
+import br.com.zupacademy.lucaslacerda.mercadolivre.produto.compra.Compra;
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.imagem.ImagemProduto;
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.opiniao.Opiniao;
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.pergunta.Pergunta;
@@ -75,7 +76,7 @@ public class Produto {
 		
 	}
 
-	public Produto(@NotNull String nome, @NotNull BigDecimal valor, @NotNull int quantidade,
+	public Produto(@NotNull String nome, @NotNull BigDecimal valor, @NotNull Integer quantidade,
 			@Size(min = 3) Collection<CaracteristicaForm> caracteristicas, @NotNull String descricao, Categoria categoria,
 			Usuario vendedor) {
 		super();
@@ -102,7 +103,7 @@ public class Produto {
 		return valor;
 	}
 
-	public int getQuantidade() {
+	public Integer getQuantidade() {
 		return quantidade;
 	}
 
@@ -183,4 +184,20 @@ public class Produto {
 	}
 	
 	
+	public boolean verificaEstoque(Integer qtd) {
+		return this.quantidade>=qtd;
+		
+	}
+
+	public void atualizaEstoque(Integer qtd,String fluxo) {
+		this.quantidade = fluxo.equalsIgnoreCase("baixa")? diminuiEstoque(qtd):aumentaEstoque(qtd);
+	}
+	
+	public Integer aumentaEstoque(Integer qtd) {
+		return this.quantidade+qtd;
+	}
+	
+	public Integer diminuiEstoque(Integer qtd) {
+		return this.quantidade-qtd;
+	}
 }

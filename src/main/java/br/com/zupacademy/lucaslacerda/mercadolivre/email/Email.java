@@ -3,6 +3,7 @@ package br.com.zupacademy.lucaslacerda.mercadolivre.email;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import br.com.zupacademy.lucaslacerda.mercadolivre.produto.compra.Compra;
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.pergunta.Pergunta;
 
 @Component
@@ -15,6 +16,16 @@ public class Email implements EnvioEmail{
 		System.out.println("\nNova pergunta recebida: '"+pergunta.getTitulo()
 							+"' \n DE: "+pergunta.getRemetente().getUsername()+"\n Produto:"
 							+pergunta.getProduto().getNome());
+		
+	}
+
+	@Override
+	public void enviaEmailInteresseDeCompra(Compra compra) {
+		System.out.println("Enviar para: "+compra.getProduto().getVendedor().getUsername());
+		System.out.println("\nUsuario: '"+compra.getCliente().getUsername()
+							+"' \nEsta interessado em comprar o seu produto: "+compra.getProduto().getNome()
+							+"\nQuantia requisitada: "
+							+compra.getQuantidade());
 		
 	}
 

@@ -51,6 +51,9 @@ public class CadastroProdutoController {
 	
 		
 		Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if(manager.find(Produto.class, id)==null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		
 		Produto produto = manager.find(Produto.class, id);
 
 		if(!produto.verificaDono(usuarioLogado)) {
