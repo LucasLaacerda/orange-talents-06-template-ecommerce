@@ -1,18 +1,26 @@
 package br.com.zupacademy.lucaslacerda.mercadolivre.produto.compra;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.util.Assert;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.cadastro.Produto;
 import br.com.zupacademy.lucaslacerda.mercadolivre.produto.cadastro.ProdutoRepository;
@@ -43,7 +51,7 @@ public class Compra {
 	
 	@NotNull
 	@Column(nullable=false)
-	private UUID idcompra;
+	private String idcompra;
 	
 	@Enumerated
 	@NotNull @Column(nullable=false)
@@ -53,6 +61,9 @@ public class Compra {
 	@NotNull @Column(nullable=false)
 	private Status status;
 
+	@OneToMany(mappedBy = "compra",cascade = CascadeType.MERGE)
+	private Set<Transacao> transacoes = new HashSet<>();
+	
 	@Deprecated
 	public Compra() {
 		
@@ -66,7 +77,7 @@ public class Compra {
 		this.cliente = cliente;
 		this.quantidade = quantidade;
 		this.valor = produto.getValor().multiply(new BigDecimal(quantidade));
-		this.idcompra = UUID.randomUUID();
+		this.idcompra = UUID.randomUUID().toString();
 		this.gateway = gateway;
 		this.status = status.INICIADA;
 		baixaNoEstoque(produtoRepository);
@@ -88,7 +99,7 @@ public class Compra {
 		return valor;
 	}
 
-	public UUID getIdcompra() {
+	public String getIdcompra() {
 		return idcompra;
 	}
 
@@ -100,10 +111,50 @@ public class Compra {
 		return status;
 	}
 	
+	public Set<Transacao> getTransacoes() {
+		return transacoes;
+	}
+
 	private void baixaNoEstoque(ProdutoRepository produtoRepository) {
 		this.produto.atualizaEstoque(this.quantidade, "baixa");
 		produtoRepository.saveAndFlush(this.produto);
 	}
 	
+	public String urlRedirecionamento(
+			UriComponentsBuilder uriComponentsBuilder) {
+		return this.gateway.criaUrlRetorno(this, uriComponentsBuilder);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void realizaPagamento(@Valid RetornoGatewatPagamento form) {
+		
+		Transacao transacao = form.toTransacao(this);
+		Assert.isTrue(!this.transacoes.contains(transacao),"Transação ja existente: "+transacao);
+		
+		
+		Assert.isTrue(transacoesConcluidaComSucesso().isEmpty(),"Essa compra ja foi concluida com sucesso.");
+		
+		this.transacoes.add(transacao);
+	}
+
+	public boolean processadaComSucesso() {
+		return !transacoesConcluidaComSucesso().isEmpty();
+	}
+
+	private Set<Transacao> transacoesConcluidaComSucesso(){
+		Set<Transacao> transacoes = this.transacoes.stream().filter(Transacao :: concluidaComSucesso)
+				.collect(Collectors.toSet());
+			return transacoes;
+	}
+
+	@Override
+	public String toString() {
+		return "Compra [produto=" + produto + ", cliente=" + cliente + ", quantidade=" + quantidade + ", valor=" + valor
+				+ ", idcompra=" + idcompra + ", gateway=" + gateway + ", status=" + status + ", transacoes="
+				+ transacoes + "]";
+	}
 	
 }

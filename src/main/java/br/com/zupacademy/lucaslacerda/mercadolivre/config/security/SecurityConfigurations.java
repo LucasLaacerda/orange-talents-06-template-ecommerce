@@ -48,9 +48,12 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter{
 	
 		http.authorizeRequests()
 		.antMatchers(HttpMethod.POST,"/usuario").permitAll()
+		.antMatchers(HttpMethod.POST,"/compra/**").permitAll()
+		.antMatchers(HttpMethod.POST,"/retorno-paypal/**").permitAll()
 		.antMatchers(HttpMethod.POST,"/auth").permitAll()
+		.antMatchers(HttpMethod.GET,"/actuator/**").permitAll()
 		//.antMatchers(HttpMethod.DELETE,"/topicos/*").access("hasRole('MODERADOR') and hasRole('ALUNO')") 
-		.anyRequest().authenticated()
+		//.anyRequest().authenticated()
 		.and().csrf().disable()
 		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService,repositoryUsuario), UsernamePasswordAuthenticationFilter.class);

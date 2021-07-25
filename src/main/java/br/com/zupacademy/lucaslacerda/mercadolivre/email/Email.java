@@ -28,6 +28,13 @@ public class Email implements EnvioEmail{
 							+compra.getQuantidade());
 		
 	}
+	
+	@Override
+	public void enviaEmailCompraNaoProcessada(Compra compra) {
+		
+		System.out.println("Não foi possivel processar a compra: "+compra.getId());
+		
+	}
 
 	
 	

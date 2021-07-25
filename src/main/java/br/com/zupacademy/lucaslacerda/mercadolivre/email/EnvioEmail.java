@@ -8,5 +8,7 @@ public interface EnvioEmail {
 	void enviaEmailNovaPergunta(Pergunta pergunta);
 	
 	void enviaEmailInteresseDeCompra(Compra compra);
+
+	void enviaEmailCompraNaoProcessada(Compra compra);
 	
 }
